@@ -1,0 +1,107 @@
+/* @theme custom */
+
+@import 'default';
+
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #1a1a1a;
+  --color-highlight: #0066cc;
+  --color-accent: #ff6b6b;
+}
+
+section {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 60px;
+}
+
+/* Headers */
+h1 {
+  color: var(--color-highlight);
+  border-bottom: 3px solid var(--color-accent);
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  color: var(--color-highlight);
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.2em;
+}
+
+h3 {
+  color: var(--color-foreground);
+}
+
+/* Links */
+a {
+  color: var(--color-highlight);
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+/* Code blocks */
+pre {
+  background-color: #f5f5f5;
+  border-left: 4px solid var(--color-highlight);
+  padding: 1em;
+}
+
+code {
+  background-color: #f0f0f0;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Lists */
+ul, ol {
+  margin-left: 1em;
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 5px solid var(--color-accent);
+  padding-left: 1em;
+  font-style: italic;
+  color: #555;
+}
+
+/* Invert class for special slides */
+section.invert {
+  background-color: var(--color-highlight);
+  color: #ffffff;
+}
+
+section.invert h1,
+section.invert h2,
+section.invert h3 {
+  color: #ffffff;
+  border-color: var(--color-accent);
+}
+
+/* Lead class for title slides */
+section.lead {
+  text-align: center;
+  justify-content: center;
+}
+
+section.lead h1 {
+  font-size: 3em;
+  border: none;
+}
+
+/* Header and footer styling */
+header,
+footer {
+  color: #888;
+  font-size: 0.8em;
+}

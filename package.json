@@ -1,0 +1,22 @@
+{
+  "name": "marp-presentation",
+  "version": "1.0.0",
+  "description": "Marp presentation slides with GitHub Pages deployment",
+  "scripts": {
+    "build": "marp slides/ -o dist/ --html",
+    "build:pdf": "marp slides/ -o dist/ --allow-local-files --pdf",
+    "watch": "marp -w slides/ -o dist/ --html",
+    "serve": "marp -s slides/ --html"
+  },
+  "keywords": [
+    "marp",
+    "presentation",
+    "slides",
+    "markdown"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^3.4.0"
+  }
+}
