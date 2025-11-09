@@ -1,4 +1,8 @@
-# Gerrit Presentations
+<div align="center">
+  <h1>Gerrit Presentations</h1>
+
+  <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/1995parham-learning/gerrit101/deploy.yml?style=for-the-badge">
+</div>
 
 ## About Marp
 
