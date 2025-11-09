@@ -21,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "latest"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -92,10 +92,6 @@ jobs:
                       <a href="gerrit-introduction.html">Introduction to Gerrit</a>
                       <div class="description">Code Review at Scale - From GitHub to Gerrit with Monorepo Benefits</div>
                   </li>
-                  <li>
-                      <a href="example.html">Example Presentation</a>
-                      <div class="description">A comprehensive example showcasing Marp features</div>
-                  </li>
               </ul>
               <hr>
               <p><small>Built with <a href="https://marp.app" target="_blank">Marp</a> and deployed via GitHub Actions</small></p>
@@ -109,7 +105,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: "./dist"
 
   deploy:
     environment:
