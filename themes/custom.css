@@ -3,16 +3,32 @@
 @import 'default';
 
 :root {
-  --color-background: #000000;
-  --color-foreground: #ffffff;
-  --color-orange: #ff6600;
-  --color-cyan: #00ffff;
-  --color-purple: #cc00ff;
-  --color-green: #00ff00;
-  --color-pink: #ff0080;
-  --color-yellow: #ffff00;
-  --color-red: #ff0000;
-  --color-blue: #0080ff;
+  /* naz.vim color palette */
+  --color-background: #323232;
+  --color-darkblack: #282826;
+  --color-foreground: #F5F5F0;
+  --color-orange: #FFB040;
+  --color-lightorange: #FFB070;
+  --color-vivid-orange: #FFD850;
+  --color-cyan: #80E5FF;
+  --color-aqua: #80E5FF;
+  --color-purple: #F0A0F0;
+  --color-green: #A0E000;
+  --color-springgreen: #20FFA0;
+  --color-lime-green: #B8FFD0;
+  --color-chartreuse: #A0FF40;
+  --color-pink: #FF69B4;
+  --color-pure-pink: #FF40A0;
+  --color-yellow: #F0E890;
+  --color-vivid-yellow: #FFE040;
+  --color-light-yellow: #FFFF88;
+  --color-red: #FF5070;
+  --color-crimson: #FF3050;
+  --color-blue: #40D0FF;
+  --color-vivid-blue: #50A8FF;
+  --color-light-blue: #60D8FF;
+  --color-coral: #FF9870;
+  --color-tomato: #FF8070;
 }
 
 section {
@@ -24,47 +40,47 @@ section {
 
 /* Headers */
 h1 {
-  color: var(--color-orange);
+  color: var(--color-vivid-orange);
   border-bottom: 3px solid var(--color-cyan);
   padding-bottom: 0.3em;
-  text-shadow: 0 0 30px rgba(255, 102, 0, 0.6);
+  text-shadow: 0 0 20px rgba(255, 216, 80, 0.4);
 }
 
 h2 {
-  color: var(--color-cyan);
-  border-bottom: 2px solid var(--color-purple);
+  color: var(--color-light-blue);
+  border-bottom: 2px solid var(--color-springgreen);
   padding-bottom: 0.2em;
-  text-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 15px rgba(96, 216, 255, 0.3);
 }
 
 h3 {
-  color: var(--color-green);
-  text-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+  color: var(--color-lime-green);
+  text-shadow: 0 0 10px rgba(184, 255, 208, 0.2);
 }
 
 /* Links */
 a {
-  color: var(--color-cyan);
+  color: var(--color-aqua);
   text-decoration: none;
-  border-bottom: 2px solid var(--color-orange);
+  border-bottom: 2px solid var(--color-lightorange);
 }
 
 a:hover {
-  color: var(--color-orange);
-  text-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
+  color: var(--color-vivid-orange);
+  text-shadow: 0 0 10px rgba(255, 216, 80, 0.4);
 }
 
 /* Code blocks */
 pre {
-  background-color: #0a0a0a;
-  border-left: 4px solid var(--color-purple);
+  background-color: var(--color-darkblack);
+  border-left: 4px solid var(--color-springgreen);
   padding: 1em;
-  box-shadow: 0 0 25px rgba(204, 0, 255, 0.4);
+  box-shadow: 0 0 20px rgba(32, 255, 160, 0.2);
 }
 
 code {
-  background-color: #0a0a0a;
-  color: var(--color-green);
+  background-color: var(--color-darkblack);
+  color: var(--color-chartreuse);
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-family: 'Courier New', Courier, monospace;
@@ -81,31 +97,31 @@ li {
 
 /* Blockquotes */
 blockquote {
-  border-left: 5px solid var(--color-orange);
+  border-left: 5px solid var(--color-lightorange);
   padding-left: 1em;
   font-style: italic;
-  color: var(--color-yellow);
-  background-color: rgba(255, 149, 0, 0.1);
+  color: var(--color-light-yellow);
+  background-color: rgba(255, 176, 64, 0.1);
   padding: 1em;
   border-radius: 4px;
 }
 
 /* Invert class for special slides */
 section.invert {
-  background: linear-gradient(135deg, #000000 0%, #1a0033 50%, #000000 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-darkblack) 0%, #3a2a45 50%, var(--color-darkblack) 100%);
+  color: var(--color-foreground);
 }
 
 section.invert h1 {
-  color: var(--color-orange);
-  border-color: var(--color-cyan);
-  text-shadow: 0 0 40px rgba(255, 102, 0, 0.8);
+  color: var(--color-vivid-orange);
+  border-color: var(--color-aqua);
+  text-shadow: 0 0 25px rgba(255, 216, 80, 0.5);
 }
 
 section.invert h2,
 section.invert h3 {
-  color: var(--color-cyan);
-  border-color: var(--color-purple);
+  color: var(--color-light-blue);
+  border-color: var(--color-pink);
 }
 
 /* Lead class for title slides */
@@ -128,21 +144,21 @@ footer {
 
 /* Strong and emphasis */
 strong {
-  color: var(--color-orange);
+  color: var(--color-lightorange);
   font-weight: 700;
 }
 
 em {
-  color: var(--color-pink);
+  color: var(--color-lime-green);
 }
 
 /* List item markers */
 ul li::marker {
-  color: var(--color-orange);
+  color: var(--color-vivid-orange);
 }
 
 ol li::marker {
-  color: var(--color-cyan);
+  color: var(--color-springgreen);
 }
 
 /* Tables */
@@ -152,17 +168,17 @@ table {
 }
 
 th {
-  background-color: #0a0a0a;
-  color: var(--color-orange);
-  border-bottom: 2px solid var(--color-cyan);
+  background-color: var(--color-darkblack);
+  color: var(--color-vivid-orange);
+  border-bottom: 2px solid var(--color-aqua);
   padding: 0.5em;
 }
 
 td {
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid #3a3a3a;
   padding: 0.5em;
 }
 
 tr:hover {
-  background-color: rgba(255, 149, 0, 0.1);
+  background-color: rgba(255, 176, 64, 0.1);
 }
