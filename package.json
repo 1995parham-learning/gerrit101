@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Marp presentation slides with GitHub Pages deployment",
   "scripts": {
-    "build": "marp slides/ -o dist/ --html",
-    "build:pdf": "marp slides/ -o dist/ --allow-local-files --pdf",
-    "watch": "marp -w slides/ -o dist/ --html",
-    "serve": "marp -s slides/ --html"
+    "build": "marp slides/ -o dist/ --html --theme-set themes/",
+    "build:pdf": "marp slides/ -o dist/ --allow-local-files --pdf --theme-set themes/",
+    "watch": "marp -w slides/ -o dist/ --html --theme-set themes/",
+    "serve": "marp -s slides/ --html --theme-set themes/"
   },
   "keywords": [
     "marp",

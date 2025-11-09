@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: default
+theme: custom
 paginate: true
 header: 'My Presentation'
 footer: 'Created with Marp'
