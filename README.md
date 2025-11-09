@@ -10,7 +10,7 @@
 
 ## Project Structure
 
-```
+```text
 .
 ├── slides/              # Your presentation markdown files
 │   └── example.md       # Example presentation
