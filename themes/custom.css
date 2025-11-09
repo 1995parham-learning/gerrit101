@@ -182,3 +182,141 @@ td {
 tr:hover {
   background-color: rgba(255, 176, 64, 0.1);
 }
+
+/* Syntax Highlighting (highlight.js) - naz.vim inspired */
+/* Base code styling */
+pre code {
+  color: var(--color-foreground);
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+  color: #A8A8A0; /* grey from naz.vim */
+  font-style: italic;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-regexp,
+.hljs-symbol,
+.hljs-template-variable,
+.hljs-variable.language_ {
+  color: var(--color-chartreuse); /* #A0FF40 - chartreuse */
+}
+
+/* Numbers */
+.hljs-number,
+.hljs-literal {
+  color: var(--color-tomato); /* #FF8070 - tomato */
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-deletion {
+  color: var(--color-aqua); /* #80E5FF - aqua */
+}
+
+/* Functions */
+.hljs-function,
+.hljs-title.function_,
+.hljs-title.class_,
+.hljs-title.class_.inherited__ {
+  color: var(--color-blue); /* #40D0FF - blue */
+}
+
+/* Built-in functions and classes */
+.hljs-built_in,
+.hljs-type {
+  color: #D8B088; /* camel from naz.vim */
+  font-weight: bold;
+}
+
+/* Variables, attributes, properties */
+.hljs-variable,
+.hljs-attr,
+.hljs-property,
+.hljs-attribute {
+  color: var(--color-orange); /* #FFB040 - orange */
+}
+
+/* Operators */
+.hljs-operator,
+.hljs-punctuation {
+  color: var(--color-aqua); /* #80E5FF - aqua */
+}
+
+/* Tags (HTML/XML) */
+.hljs-tag,
+.hljs-name {
+  color: var(--color-pink); /* #FF69B4 - pink */
+}
+
+/* Meta, decorators, annotations */
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-doctag {
+  color: var(--color-coral); /* #FF9870 - coral */
+}
+
+/* Types, storage class */
+.hljs-class,
+.hljs-type {
+  color: var(--color-lime-green); /* #B8FFD0 - lime green */
+  font-style: italic;
+}
+
+/* Booleans, constants */
+.hljs-params,
+.hljs-constant {
+  color: var(--color-purple); /* #F0A0F0 - purple */
+}
+
+/* Parameters */
+.hljs-params {
+  color: var(--color-pure-pink); /* #FF40A0 - pure pink */
+}
+
+/* Sections, headings */
+.hljs-section,
+.hljs-title {
+  color: var(--color-vivid-yellow); /* #FFE040 - vivid yellow */
+}
+
+/* Links */
+.hljs-link,
+.hljs-subst {
+  color: var(--color-aqua);
+}
+
+/* Additions (diff) */
+.hljs-addition {
+  color: var(--color-springgreen); /* #20FFA0 - spring green */
+}
+
+/* Emphasis */
+.hljs-emphasis {
+  font-style: italic;
+  color: var(--color-lime-green);
+}
+
+/* Strong */
+.hljs-strong {
+  font-weight: bold;
+  color: var(--color-lightorange);
+}
+
+/* Selector classes and IDs */
+.hljs-selector-class {
+  color: var(--color-lightorange);
+}
+
+.hljs-selector-id {
+  color: var(--color-vivid-orange);
+}
+
+/* Template tags */
+.hljs-template-tag {
+  color: var(--color-pink);
+}

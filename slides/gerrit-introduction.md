@@ -166,8 +166,8 @@ git clone https://gerrit.company.com/monorepo
 cd monorepo
 
 # Make changes across multiple services
-vim services/api/handler.go
-vim services/frontend/api-client.ts
+nvim services/api/handler.go
+nvim services/frontend/api-client.ts
 
 # Commit with Change-Id
 git commit -m "Update API endpoint across services"
