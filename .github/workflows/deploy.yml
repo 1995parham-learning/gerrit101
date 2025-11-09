@@ -43,7 +43,7 @@ jobs:
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Marp Presentations</title>
+              <title>Gerrit Presentations</title>
               <style>
                   body {
                       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -85,7 +85,7 @@ jobs:
               </style>
           </head>
           <body>
-              <h1>📊 Marp Presentations</h1>
+              <h1>📊 Gerrit Presentations</h1>
               <p>Welcome! Here are the available presentations:</p>
               <ul>
                   <li>
@@ -94,7 +94,7 @@ jobs:
                   </li>
               </ul>
               <hr>
-              <p><small>Built with <a href="https://marp.app" target="_blank">Marp</a> and deployed via GitHub Actions</small></p>
+              <p><small>Built with <a href="https://marp.app" target="_blank">Marp</a></small></p>
           </body>
           </html>
           EOF
