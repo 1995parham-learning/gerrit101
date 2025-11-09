@@ -2,8 +2,8 @@
 marp: true
 theme: custom
 paginate: true
-header: 'Introduction to Gerrit'
-footer: 'Code Review at Scale'
+header: "Introduction to Gerrit"
+footer: "Code Review at Scale"
 ---
 
 <!-- _class: invert lead -->
@@ -27,12 +27,12 @@ From GitHub to Gerrit
 
 ## GitHub vs Gerrit (High-Level)
 
-| Feature | GitHub PRs | Gerrit Reviews |
-| --- | --- | --- |
-| **Review Model** | Pull Request | Patch-based, per-commit review |
-| **Merge Control** | Branch protection | Mandatory approval + CI checks |
-| **Workflow** | Fork & PR | Push for review (refs/for/*) |
-| **Scale** | Medium → Large projects | Very Large projects (Android, etc.) |
+| Feature           | GitHub PRs              | Gerrit Reviews                      |
+| ----------------- | ----------------------- | ----------------------------------- |
+| **Review Model**  | Pull Request            | Patch-based, per-commit review      |
+| **Merge Control** | Branch protection       | Mandatory approval + CI checks      |
+| **Workflow**      | Fork & PR               | Push for review (refs/for/\*)       |
+| **Scale**         | Medium → Large projects | Very Large projects (Android, etc.) |
 
 ---
 
@@ -79,6 +79,7 @@ From GitHub to Gerrit
 > A single repository containing multiple projects, services, or components
 
 **Examples:**
+
 - Google (billions of lines of code)
 - Facebook/Meta
 - Microsoft
@@ -92,6 +93,7 @@ From GitHub to Gerrit
 <div style="flex: 1;">
 
 ### Monorepo Benefits
+
 - Atomic changes
 - Shared code
 - Unified versioning
@@ -101,6 +103,7 @@ From GitHub to Gerrit
 <div style="flex: 1;">
 
 ### Gerrit Benefits
+
 - Per-commit review
 - Dependency tracking
 - Cross-project changes
@@ -114,14 +117,17 @@ From GitHub to Gerrit
 ## Key Monorepo Advantages
 
 **Code Reuse & Sharing**
+
 - Share libraries, utilities, configs across projects
 - No dependency hell or versioning conflicts
 
 **Atomic Cross-Project Changes**
+
 - Refactor APIs across multiple services in one commit
 - Gerrit reviews the entire change atomically
 
 **Consistent Tooling**
+
 - Single CI/CD pipeline
 - Unified linting, testing, build tools
 
@@ -130,11 +136,13 @@ From GitHub to Gerrit
 ## Monorepo Advantages (continued)
 
 **Simplified Dependency Management**
+
 - All dependencies visible in one place
 - No "diamond dependency" problems
 - Easy to upgrade shared dependencies
 
 **Better Collaboration**
+
 - All teams see all code
 - Knowledge sharing across teams
 - Find experts and examples easily
@@ -223,12 +231,14 @@ git commit -m "Add new feature"
 ## Code Review Best Practices
 
 **For Authors:**
+
 - Keep commits small and focused
 - Write clear commit messages
 - Respond to feedback promptly
 - Don't take criticism personally
 
 **For Reviewers:**
+
 - Review promptly (within 24 hours)
 - Be constructive and specific
 - Focus on code, not the person
@@ -238,13 +248,13 @@ git commit -m "Add new feature"
 
 ## Comparison: Multi-Repo vs Monorepo
 
-| Aspect | Multi-Repo | Monorepo |
-| --- | --- | --- |
-| **Cross-project changes** | Multiple PRs, coordination needed | Single atomic commit |
-| **Code sharing** | NPM/packages, versioning issues | Direct imports, no versions |
-| **CI/CD** | Per-repo pipelines | Unified pipeline |
-| **Permissions** | Per-repo | Fine-grained in monorepo |
-| **Complexity** | Many repos to manage | Single repo, better tooling needed |
+| Aspect                    | Multi-Repo                        | Monorepo                           |
+| ------------------------- | --------------------------------- | ---------------------------------- |
+| **Cross-project changes** | Multiple PRs, coordination needed | Single atomic commit               |
+| **Code sharing**          | NPM/packages, versioning issues   | Direct imports, no versions        |
+| **CI/CD**                 | Per-repo pipelines                | Unified pipeline                   |
+| **Permissions**           | Per-repo                          | Fine-grained in monorepo           |
+| **Complexity**            | Many repos to manage              | Single repo, better tooling needed |
 
 ---
 
@@ -273,6 +283,7 @@ git commit -m "Add new feature"
 **Gerrit** → Strict, scalable review system
 
 **Great for:**
+
 - Enterprise & large-scale OSS
 - Teams adopting monorepo strategy
 - Projects requiring audit trails
@@ -282,27 +293,20 @@ Review every change, not just merges
 
 ---
 
-## Recommended Migration Path
-
-1. **Phase 1:** Set up Gerrit instance
-2. **Phase 2:** Migrate one small project
-3. **Phase 3:** Train team on workflows
-4. **Phase 4:** Consolidate repos into monorepo
-5. **Phase 5:** Migrate all projects
-
----
-
 ## Resources
 
 **Gerrit Documentation**
+
 - [gerrit-review.googlesource.com](https://gerrit-review.googlesource.com)
 
 **Monorepo Tools**
+
 - Bazel (Google's build system)
 - Pants (Twitter, Foursquare)
 - Nx (JavaScript/TypeScript)
 
 **Git Review CLI**
+
 - `pip install git-review`
 
 ---
