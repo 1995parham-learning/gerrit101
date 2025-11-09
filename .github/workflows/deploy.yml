@@ -89,6 +89,10 @@ jobs:
               <p>Welcome! Here are the available presentations:</p>
               <ul>
                   <li>
+                      <a href="gerrit-introduction.html">Introduction to Gerrit</a>
+                      <div class="description">Code Review at Scale - From GitHub to Gerrit with Monorepo Benefits</div>
+                  </li>
+                  <li>
                       <a href="example.html">Example Presentation</a>
                       <div class="description">A comprehensive example showcasing Marp features</div>
                   </li>
