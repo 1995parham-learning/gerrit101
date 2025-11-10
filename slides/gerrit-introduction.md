@@ -59,6 +59,86 @@ From GitHub to Gerrit
 
 <!-- _class: invert -->
 
+# Squash vs Gerrit Approach
+
+**Different Philosophies**
+
+---
+
+## GitHub: Squash and Merge
+
+**Common GitHub workflow:**
+```bash
+# Multiple commits on feature branch
+git commit -m "Start feature"
+git commit -m "WIP"
+git commit -m "Fix bug"
+git commit -m "Address review comments"
+git commit -m "Fix typo"
+
+# On merge: All commits → 1 squashed commit
+```
+
+**Result:** Clean main branch, but **loses granular history**
+
+---
+
+## Gerrit: One Commit, One Change
+
+**Gerrit philosophy:**
+```bash
+# One logical change = One commit
+git commit -m "Add user authentication feature"
+
+# Review feedback? Amend the same commit
+git commit --amend
+
+# Push again - same Change-Id, new patchset
+git push origin HEAD:refs/for/main
+```
+
+**Result:** Clean history **from the start**, every commit reviewable
+
+---
+
+## Why Gerrit's Approach Wins
+
+**Squash Merge Problems:**
+- Can't review individual commits
+- Loses development history
+- Hard to find when bugs were introduced
+- Can't cherry-pick specific changes easily
+
+---
+
+## Why Gerrit's Approach Wins (cont.)
+
+**Gerrit Benefits:**
+- **Every commit is reviewed** before merge
+- **Clean history by design**, not by accident
+- `git bisect` works perfectly
+- Easy cherry-picking for backports
+
+**Bottom line:** Quality enforced at commit time, not hidden at merge time
+
+---
+
+## Squash vs Gerrit: The Verdict
+
+| Aspect | Squash (GitHub) | Gerrit |
+| --- | --- | --- |
+| **History cleanliness** | Clean main, messy feature branch | Always clean |
+| **Granularity** | Lost on squash | Preserved |
+| **Review** | Review branch, merge 1 commit | Review each commit |
+| **Debugging** | Hard to bisect | Easy to bisect |
+| **Cherry-pick** | All or nothing | Pick specific commits |
+
+**Gerrit forces good habits**, squash tries to hide bad ones
+
+---
+
+<!-- _class: invert -->
+
 # Understanding Gerrit Labels
 
 **The Review System Explained**
@@ -176,6 +256,48 @@ Add comments, vote on labels, and provide feedback
 
 ---
 
+## OWNERS Files
+
+**Fine-grained code ownership in monorepos**
+
+OWNERS files define who can approve changes in specific directories:
+
+```
+# /services/auth/OWNERS
+# People who can approve auth service changes
+alice@company.com
+bob@company.com
+
+# Or use groups
+auth-team@company.com
+```
+
+**Benefits:**
+- Ensures domain experts review their areas
+- Scales review process across large codebases
+
+---
+
+## OWNERS File Features
+
+**Hierarchical ownership:**
+```
+/                    # Root OWNERS
+  global-leads@company.com
+
+/services/api/       # API team owns this
+  api-team@company.com
+
+/services/api/auth/  # Auth specialists override
+  security-team@company.com
+```
+
+**Gerrit integration:** Automatically adds reviewers based on changed files
+
+**Common in:** Chromium, Android, Kubernetes, and large monorepos
+
+---
+
 ## Review Best Practices
 
 **Voting Guidelines:**
@@ -202,6 +324,21 @@ Add comments, vote on labels, and provide feedback
 - Be respectful and constructive
 - Ask questions, don't make assumptions
 - Acknowledge good work
+
+---
+
+## Developer Life: Before Gerrit
+
+```
+git commit -m "fix"
+git commit -m "fix fix"
+git commit -m "actually fix"
+git commit -m "why doesn't this work"
+git commit -m "FINALLY WORKING"
+git push --force
+```
+
+*Sound familiar?* 😅
 
 ---
 
@@ -394,6 +531,26 @@ git commit -m "Add new feature"
 
 ---
 
+## The Code Review Cycle
+
+```
+Developer: "This is my best code ever!"
+         ↓
+Reviewer: "Have you considered...?"
+         ↓
+Developer: "Oh no, you're right"
+         ↓
+*Amends commit 47 times*
+         ↓
+Reviewer: "LGTM! +2"
+         ↓
+CI: "Build failed"
+         ↓
+Developer: *cries*
+```
+
+---
+
 ## Code Review Best Practices
 
 **For Authors:**
@@ -438,6 +595,25 @@ git commit -m "Add new feature"
 
 **Challenge:** Learning curve
 **Solution:** Training, documentation, git-review tool
+
+---
+
+## Git Expertise Levels
+
+```
+Junior Dev:  git add .
+             git commit
+             git push
+
+Mid Dev:     git rebase -i HEAD~5
+             git push --force-with-lease
+
+Senior Dev:  ssh gerrit gerrit query --format=JSON \
+               status:open | jq '.[] | select(.age > 30)'
+
+Wizard:      *Edits .git/objects directly*
+             "I am one with the repository"
+```
 
 ---
 
@@ -710,6 +886,24 @@ Review every change, not just merges
 
 - Gerrit User Summit
 - #gerrit on IRC/Slack
+
+---
+
+## The Truth About Code Review
+
+```
+What developers say:
+"I love code reviews! They make my code better."
+
+What developers think:
+"Please approve quickly so I can go to lunch"
+
+What actually happens:
+"Why are you changing my entire architecture
+ in the comments? It's just a typo fix!"
+```
+
+**But seriously... code reviews are awesome!** 👍
 
 ---
 
