@@ -3,7 +3,6 @@ marp: true
 theme: custom
 paginate: true
 header: "Introduction to Gerrit"
-footer: "Code Review at Scale"
 ---
 
 <!-- _class: invert lead -->
@@ -68,6 +67,7 @@ From GitHub to Gerrit
 ## GitHub: Squash and Merge
 
 **Common GitHub workflow:**
+
 ```bash
 # Multiple commits on feature branch
 git commit -m "Start feature"
@@ -86,6 +86,7 @@ git commit -m "Fix typo"
 ## Gerrit: One Commit, One Change
 
 **Gerrit philosophy:**
+
 ```bash
 # One logical change = One commit
 git commit -m "Add user authentication feature"
@@ -104,6 +105,7 @@ git push origin HEAD:refs/for/main
 ## Why Gerrit's Approach Wins
 
 **Squash Merge Problems:**
+
 - Can't review individual commits
 - Loses development history
 - Hard to find when bugs were introduced
@@ -114,26 +116,31 @@ git push origin HEAD:refs/for/main
 ## Why Gerrit's Approach Wins (cont.)
 
 **Gerrit Benefits:**
+
 - **Every commit is reviewed** before merge
 - **Clean history by design**, not by accident
 - `git bisect` works perfectly
 - Easy cherry-picking for backports
 
-**Bottom line:** Quality enforced at commit time, not hidden at merge time
+<blockquote class="callout-tip">
+<strong>Bottom line:</strong> Quality enforced at commit time, not hidden at merge time
+</blockquote>
 
 ---
 
 ## Squash vs Gerrit: The Verdict
 
-| Aspect | Squash (GitHub) | Gerrit |
-| --- | --- | --- |
-| **History cleanliness** | Clean main, messy feature branch | Always clean |
-| **Granularity** | Lost on squash | Preserved |
-| **Review** | Review branch, merge 1 commit | Review each commit |
-| **Debugging** | Hard to bisect | Easy to bisect |
-| **Cherry-pick** | All or nothing | Pick specific commits |
+| Aspect                  | Squash (GitHub)                  | Gerrit                |
+| ----------------------- | -------------------------------- | --------------------- |
+| **History cleanliness** | Clean main, messy feature branch | Always clean          |
+| **Granularity**         | Lost on squash                   | Preserved             |
+| **Review**              | Review branch, merge 1 commit    | Review each commit    |
+| **Debugging**           | Hard to bisect                   | Easy to bisect        |
+| **Cherry-pick**         | All or nothing                   | Pick specific commits |
 
-**Gerrit forces good habits**, squash tries to hide bad ones
+<blockquote class="callout-note">
+<strong>Gerrit forces good habits</strong>, squash tries to hide bad ones
+</blockquote>
 
 ---
 
@@ -157,7 +164,9 @@ The **Code-Review** label is the primary approval mechanism:
 | **-1** | I would prefer you didn't  | Minor concerns to address   |
 | **-2** | Do not submit              | Hard veto - blocks merge    |
 
-**Rule:** Need at least one **+2** and **no -2** votes to merge
+<blockquote class="callout-info">
+<strong>Rule:</strong> Need at least one <strong>+2</strong> and <strong>no -2</strong> votes to merge
+</blockquote>
 
 ---
 
@@ -173,7 +182,9 @@ The **Verified** label confirms build/test status:
 
 **Usually automated** by CI systems (Jenkins, GitLab CI, etc.)
 
-**Rule:** Need at least one **+1** and **no -1** to merge
+<blockquote class="callout-info">
+<strong>Rule:</strong> Need at least one <strong>+1</strong> and <strong>no -1</strong> to merge
+</blockquote>
 
 ---
 
@@ -191,7 +202,9 @@ Reviewer 2 → Code-Review: +2 (approved!)
 Submit button enabled → Change merged
 ```
 
-**Both labels must be satisfied to submit**
+<blockquote class="callout-warning">
+<strong>Both labels must be satisfied to submit</strong>
+</blockquote>
 
 ---
 
@@ -273,6 +286,7 @@ auth-team@company.com
 ```
 
 **Benefits:**
+
 - Ensures domain experts review their areas
 - Scales review process across large codebases
 
@@ -281,6 +295,7 @@ auth-team@company.com
 ## OWNERS File Features
 
 **Hierarchical ownership:**
+
 ```
 /                    # Root OWNERS
   global-leads@company.com
@@ -292,9 +307,20 @@ auth-team@company.com
   security-team@company.com
 ```
 
-**Gerrit integration:** Automatically adds reviewers based on changed files
+---
+
+## OWNERS File Features (cont.)
+
+<blockquote class="callout-tip">
+<strong>Gerrit integration:</strong> Automatically adds reviewers based on changed files
+</blockquote>
 
 **Common in:** Chromium, Android, Kubernetes, and large monorepos
+
+**Advanced features:**
+- Wildcards for file patterns
+- `set noparent` to stop inheritance
+- Per-file OWNERS rules
 
 ---
 
@@ -338,7 +364,7 @@ git commit -m "FINALLY WORKING"
 git push --force
 ```
 
-*Sound familiar?* 😅
+_Sound familiar?_ 😅
 
 ---
 
@@ -502,8 +528,11 @@ Best Practices for Success
 
 - Always push changes to `refs/for/<branch>` (not directly to the branch)
 - Use `git commit --amend` to update last commit before re-pushing
-- Make sure every commit has a **Change-Id** (use commit-msg hook)
 - **One commit = one logical change** → keeps history clean
+
+<blockquote class="callout-warning">
+<strong>Important:</strong> Make sure every commit has a <strong>Change-Id</strong> (use commit-msg hook)
+</blockquote>
 
 ---
 

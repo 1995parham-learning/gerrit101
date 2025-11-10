@@ -104,6 +104,78 @@ blockquote {
   background-color: rgba(255, 176, 64, 0.1);
   padding: 1em;
   border-radius: 4px;
+  margin: 1em 0;
+}
+
+/* GitHub-style Callouts - Custom Directives */
+/* Use <!-- --> class comments for callout types */
+
+/* Note callout - purple */
+blockquote.callout-note {
+  border-left-color: var(--color-purple);
+  background-color: rgba(240, 160, 240, 0.15);
+  color: var(--color-foreground);
+  font-style: normal;
+}
+
+blockquote.callout-note::before {
+  content: "📝 NOTE";
+  display: block;
+  font-weight: bold;
+  color: var(--color-purple);
+  margin-bottom: 0.5em;
+  font-size: 0.9em;
+}
+
+/* Tip callout - green */
+blockquote.callout-tip {
+  border-left-color: var(--color-springgreen);
+  background-color: rgba(32, 255, 160, 0.15);
+  color: var(--color-foreground);
+  font-style: normal;
+}
+
+blockquote.callout-tip::before {
+  content: "💡 TIP";
+  display: block;
+  font-weight: bold;
+  color: var(--color-springgreen);
+  margin-bottom: 0.5em;
+  font-size: 0.9em;
+}
+
+/* Warning callout - red */
+blockquote.callout-warning {
+  border-left-color: var(--color-red);
+  background-color: rgba(255, 80, 112, 0.15);
+  color: var(--color-foreground);
+  font-style: normal;
+}
+
+blockquote.callout-warning::before {
+  content: "⚠️ WARNING";
+  display: block;
+  font-weight: bold;
+  color: var(--color-red);
+  margin-bottom: 0.5em;
+  font-size: 0.9em;
+}
+
+/* Info callout - cyan */
+blockquote.callout-info {
+  border-left-color: var(--color-aqua);
+  background-color: rgba(128, 229, 255, 0.15);
+  color: var(--color-foreground);
+  font-style: normal;
+}
+
+blockquote.callout-info::before {
+  content: "ℹ️ INFO";
+  display: block;
+  font-weight: bold;
+  color: var(--color-aqua);
+  margin-bottom: 0.5em;
+  font-size: 0.9em;
 }
 
 /* Invert class for special slides */
