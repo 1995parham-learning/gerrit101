@@ -1086,6 +1086,10 @@ Change 12346 (Feature B) - Under Review
 - Or review the entire chain together
 - Gerrit shows which changes are blocking others
 
+---
+
+## Reviewing Dependent Changes (Cont'd)
+
 **Review order matters:**
 
 - Feature A must be approved first
