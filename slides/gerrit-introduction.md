@@ -318,6 +318,7 @@ auth-team@company.com
 **Common in:** Chromium, Android, Kubernetes, and large monorepos
 
 **Advanced features:**
+
 - Wildcards for file patterns
 - `set noparent` to stop inheritance
 - Per-file OWNERS rules
@@ -627,6 +628,97 @@ Developer: *cries*
 
 ---
 
+## Partial Clone for Large Monorepos
+
+**Problem:** Monorepo is huge, full clone takes forever
+
+**Solution:** Git partial clone (blobless clone)
+
+```bash
+# Clone without downloading blob objects initially
+git clone --filter=blob:none https://gerrit.company.com/monorepo
+```
+
+**How it works:**
+
+- Downloads commit and tree objects
+- Skips blob objects (file contents) initially
+- Fetches blobs on-demand when you checkout/access files
+- Dramatically faster clone times
+
+---
+
+## Partial Clone for Large Monorepos (cont.)
+
+**Different filter options:**
+
+```bash
+# No blobs at all (fetch on demand)
+git clone --filter=blob:none <url>
+
+# No blobs larger than 1MB
+git clone --filter=blob:limit=1m <url>
+
+# Blobless + treeless (even faster, advanced)
+git clone --filter=tree:0 <url>
+```
+
+**Real-world impact:**
+
+- **Full clone:** 10 GB, 45 minutes
+- **Partial clone:** 500 MB, 3 minutes
+- Blobs downloaded automatically when needed
+
+---
+
+## Partial Clone for Large Monorepos (cont.)
+
+**Combine with sparse checkout:**
+
+```bash
+# Partial clone
+git clone --filter=blob:none https://gerrit.company.com/monorepo
+cd monorepo
+
+# Only checkout specific directories
+git sparse-checkout init --cone
+git sparse-checkout set services/auth services/api
+
+# Now you have:
+# - Fast clone (no blobs upfront)
+# - Small working directory (only auth and api services)
+```
+
+**Perfect for:**
+
+- Large monorepos with many microservices
+- Developers working on specific services
+- CI/CD pipelines that need only parts of the repo
+
+---
+
+## Partial Clone Best Practices
+
+**When to use:**
+
+- Monorepos over 5 GB
+- Teams working on isolated services
+- CI builds that don't need full repo
+
+**Tips:**
+
+- Use `--filter=blob:none` as default for large repos
+- Combine with sparse checkout for maximum efficiency
+- CI/CD: Clone only what you build/test
+
+**Limitations:**
+
+- Some Git operations may trigger on-demand fetches
+- Requires Git 2.22+ (released 2019)
+- Server must support partial clone (Gerrit does!)
+
+---
+
 ## Git Expertise Levels
 
 ```
@@ -866,6 +958,729 @@ ssh gerrit gerrit query status:open label:Code-Review+2
 | **Real-time monitoring** | ✓ stream-events     | Requires polling |
 
 **Best practice:** Use SSH for automation, queries, and monitoring; use Web UI for detailed code review.
+
+---
+
+<!-- _class: invert -->
+
+# Dependent Changes
+
+**Building on Top of Unmerged Work**
+
+---
+
+## The Scenario: Dependent Features
+
+**Common situation:**
+
+- You're working on Feature B
+- But Feature B needs Feature A
+- Feature A is still under review (not merged yet)
+
+**In GitHub:** You'd create a new branch from your feature branch
+
+**In Gerrit:** You create a **change chain** (dependent changes)
+
+---
+
+## Creating Dependent Changes
+
+**Step 1: Create first change**
+
+```bash
+# On main branch
+git checkout main
+git pull
+
+# Create Feature A
+nvim feature-a.go
+git add .
+git commit -m "Add Feature A: User authentication"
+git push origin HEAD:refs/for/main
+```
+
+**Change 12345 created** ✓
+
+---
+
+## Creating Dependent Changes (cont.)
+
+**Step 2: Create dependent change**
+
+```bash
+# DON'T go back to main!
+# Stay on current branch with Feature A
+
+# Create Feature B (builds on Feature A)
+nvim feature-b.go
+git add .
+git commit -m "Add Feature B: User authorization (depends on Feature A)"
+git push origin HEAD:refs/for/main
+```
+
+**Change 12346 created** ✓ (depends on 12345)
+
+---
+
+## How Gerrit Tracks Dependencies
+
+**Gerrit automatically detects the dependency:**
+
+- Change 12346 has Change 12345 as its parent commit
+- In Gerrit UI, you'll see "Related Changes" section
+- Shows the dependency chain clearly
+
+**Visualization:**
+
+```
+main branch
+    ↓
+Change 12345 (Feature A) - Under Review
+    ↓
+Change 12346 (Feature B) - Under Review
+```
+
+---
+
+## Reviewing Dependent Changes
+
+**Reviewers can see the full context:**
+
+- Each change can be reviewed independently
+- Or review the entire chain together
+- Gerrit shows which changes are blocking others
+
+**Review order matters:**
+
+- Feature A must be approved first
+- Feature B can be reviewed in parallel
+- But can't be merged until Feature A merges
+
+<blockquote class="callout-tip">
+<strong>Pro tip:</strong> Use topics to group related changes: <code>git push origin HEAD:refs/for/main%topic=user-auth-system</code>
+</blockquote>
+
+---
+
+## Updating Dependent Changes
+
+**If Feature A needs changes after review:**
+
+```bash
+# Go back to Feature A commit
+git rebase -i HEAD~2  # Interactive rebase
+
+# Or use git checkout to the specific commit
+git log --oneline  # Find commit hash
+git checkout abc123  # Feature A commit
+```
+
+**Make changes:**
+
+```bash
+nvim feature-a.go
+git add .
+git commit --amend
+git push origin HEAD:refs/for/main
+```
+
+---
+
+## Updating Dependent Changes (cont.)
+
+**Now rebase Feature B on top of updated Feature A:**
+
+```bash
+# Checkout Feature B commit
+git checkout HEAD@{1}  # Or use commit hash
+
+# Rebase onto the amended Feature A
+git rebase abc456  # New hash of Feature A
+git push origin HEAD:refs/for/main
+```
+
+**Both changes updated** ✓
+
+<blockquote class="callout-warning">
+<strong>Important:</strong> Always rebase dependent changes after updating parent changes
+</blockquote>
+
+---
+
+## The Easier Way: Stay on Branch
+
+**Simpler workflow for dependent changes:**
+
+```bash
+# Create Feature A
+git commit -m "Add Feature A"
+git push origin HEAD:refs/for/main
+
+# Stay on same branch, create Feature B
+git commit -m "Add Feature B (depends on A)"
+git push origin HEAD:refs/for/main
+
+# Both changes pushed, dependency tracked automatically
+```
+
+**To update Feature A:**
+
+```bash
+git rebase -i HEAD~2  # Edit the first commit
+# Make changes, amend
+git rebase --continue
+git push origin HEAD:refs/for/main  # Updates both changes
+```
+
+---
+
+## Merging Dependent Changes
+
+**Gerrit enforces the correct order:**
+
+1. Feature A gets approved (+2, Verified +1)
+2. Submit Feature A → merges to main
+3. Feature B automatically rebases onto main
+4. Feature B can now be submitted
+
+**Gerrit does this automatically!**
+
+<blockquote class="callout-info">
+<strong>Cherry-pick on merge:</strong> When Feature A merges, Gerrit can auto-rebase Feature B onto the new main
+</blockquote>
+
+---
+
+## Dependent Changes: Best Practices
+
+**Keep chains short:**
+
+- 2-3 changes is ideal
+- Long chains are harder to review and manage
+
+**Make each change self-contained:**
+
+- Each commit should be reviewable on its own
+- Clear commit messages explaining dependencies
+
+**Use topics for grouping:**
+
+- Helps reviewers understand the bigger picture
+- `git push origin HEAD:refs/for/main%topic=feature-name`
+
+---
+
+## Dependent Changes: Best Practices (cont.)
+
+**Communicate with reviewers:**
+
+- Add comments explaining the dependency
+- Link related changes in commit messages
+- Example: "Depends-On: Change-Id I1234567..."
+
+**Test each change:**
+
+- CI should run on each change independently
+- But consider testing the full chain too
+
+---
+
+## Common Pitfall: Lost Dependencies
+
+**What NOT to do:**
+
+```bash
+# Wrong: Going back to main breaks the chain
+git checkout main
+git commit -m "Feature B"  # No longer depends on Feature A!
+git push origin HEAD:refs/for/main
+```
+
+**Right approach:**
+
+```bash
+# Correct: Stay on branch or explicitly rebase
+git commit -m "Feature B"  # Still has Feature A as parent
+git push origin HEAD:refs/for/main
+```
+
+---
+
+## Real-World Example
+
+**Scenario:** API change across services
+
+```bash
+# Change 1: Update API contract
+git commit -m "Update User API: add email field"
+git push origin HEAD:refs/for/main
+
+# Change 2: Update API implementation (depends on Change 1)
+git commit -m "Implement email field in User service"
+git push origin HEAD:refs/for/main
+
+# Change 3: Update API client (depends on Change 2)
+git commit -m "Add email field to frontend user client"
+git push origin HEAD:refs/for/main
+```
+
+**Result:** 3-change chain, each reviewable, merges in order
+
+---
+
+## Dependent Changes vs Feature Branches
+
+| Aspect                 | Feature Branch (GitHub) | Change Chain (Gerrit)     |
+| ---------------------- | ----------------------- | ------------------------- |
+| **Dependency**         | Branch-level            | Commit-level              |
+| **Review granularity** | Entire branch           | Each commit individually  |
+| **Merge order**        | Manual coordination     | Enforced by Gerrit        |
+| **Rebase complexity**  | Rebase entire branch    | Rebase individual commits |
+| **Atomicity**          | All or nothing          | Incremental merging       |
+| **Cherry-pick**        | Difficult               | Easy (individual commits) |
+
+<blockquote class="callout-note">
+<strong>Gerrit's approach:</strong> More granular, more flexible, cleaner history
+</blockquote>
+
+---
+
+<!-- _class: invert -->
+
+# Advanced Gerrit Workflows
+
+**Deep Dive into Real-World Usage**
+
+---
+
+## Topics and Hashtags
+
+**Topics group related changes:**
+
+```bash
+# Push with topic
+git push origin HEAD:refs/for/main%topic=user-auth-refactor
+
+# Query by topic
+ssh gerrit gerrit query topic:user-auth-refactor
+
+# Set topic on existing change
+ssh gerrit gerrit set-topic 12345 user-auth-refactor
+```
+
+**Hashtags for categorization:**
+
+```bash
+# Add hashtag via review
+ssh gerrit gerrit review 12345,1 --tag security-fix
+
+# Query by hashtag
+ssh gerrit gerrit query hashtag:security-fix
+```
+
+---
+
+## Rebasing and Merge Conflicts
+
+**Rebase your change onto latest main:**
+
+```bash
+# Fetch latest
+git fetch origin
+
+# Rebase onto main
+git rebase origin/main
+
+# Push updated change
+git push origin HEAD:refs/for/main
+```
+
+**If conflicts occur:**
+
+```bash
+# Resolve conflicts in files
+nvim conflicted-file.go
+
+git add conflicted-file.go
+git rebase --continue
+git push origin HEAD:refs/for/main
+```
+
+---
+
+## Rebasing and Merge Conflicts (cont.)
+
+**Aborting a bad rebase:**
+
+```bash
+git rebase --abort
+```
+
+**Download change from Gerrit to rebase locally:**
+
+```bash
+# From change page, copy checkout command
+git fetch origin refs/changes/45/12345/2
+git checkout FETCH_HEAD
+git rebase origin/main
+git push origin HEAD:refs/for/main
+```
+
+<blockquote class="callout-warning">
+<strong>Important:</strong> Always rebase before submitting to avoid merge conflicts
+</blockquote>
+
+---
+
+## Abandoning and Restoring Changes
+
+**Abandon a change you no longer need:**
+
+```bash
+# Via SSH
+ssh gerrit gerrit review 12345,1 \
+  --abandon \
+  --message "Superseded by change 12346"
+
+# Via git-review
+git review -A "No longer needed"
+```
+
+**Restore an abandoned change:**
+
+```bash
+ssh gerrit gerrit review 12345,1 \
+  --restore \
+  --message "Actually still needed"
+```
+
+---
+
+## Reverting Changes
+
+**Revert a merged change:**
+
+**Via Gerrit UI:**
+
+1. Open merged change
+2. Click "Revert" button
+3. Gerrit creates revert change automatically
+
+**Via command line:**
+
+```bash
+git revert abc123  # Commit hash
+git push origin HEAD:refs/for/main
+```
+
+**Creates new change that undoes the original**
+
+---
+
+## Inline Comments and Discussions
+
+**Best practices for inline comments:**
+
+**For reviewers:**
+
+- Be specific about location
+- Quote relevant code
+- Suggest concrete improvements
+- Mark as resolved when addressed
+
+**For authors:**
+
+- Reply to all comments
+- Mark "Done" when fixed
+- Push new patchset with fixes
+- Use "Reply" to continue discussion
+
+---
+
+## Inline Comments and Discussions (cont.)
+
+**Gerrit tracks comment threads:**
+
+- Comments stay visible across patchsets
+- Can see what changed between revisions
+- "Resolved" comments are hidden by default
+
+**Draft comments:**
+
+- Write comments without publishing
+- Review all comments before sending
+- Send all at once with overall vote
+
+---
+
+## Handling Large Changes
+
+**When your change is too big:**
+
+**Option 1: Split into smaller changes**
+
+```bash
+# Use interactive rebase to split commits
+git rebase -i HEAD~3
+# Mark commits to 'edit'
+# Split and create multiple commits
+# Push each as separate change
+```
+
+**Option 2: Use topics to group**
+
+```bash
+# Push related changes with same topic
+git push origin HEAD:refs/for/main%topic=big-refactor
+```
+
+---
+
+## Handling Large Changes (cont.)
+
+**Best practices:**
+
+- Keep changes under 500 lines when possible
+- One logical change per commit
+- Split refactoring from feature work
+- Use dependent changes for phased rollout
+
+<blockquote class="callout-note">
+<strong>Rule of thumb:</strong> If you can't review it in 30 minutes, it's too big
+</blockquote>
+
+---
+
+## Automated Workflows with Gerrit
+
+**CI/CD integration patterns:**
+
+**Jenkins Integration:**
+
+```groovy
+// Jenkinsfile
+pipeline {
+    triggers {
+        gerrit customUrl: '',
+               gerritProjects: [[pattern: 'myproject', branches: ['main']]],
+               triggerOnPatchsetCreated: true
+    }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'make test'
+            }
+        }
+    }
+    post {
+        success {
+            gerritReview labels: [Verified: 1]
+        }
+        failure {
+            gerritReview labels: [Verified: -1]
+        }
+    }
+}
+```
+
+---
+
+## Troubleshooting Common Issues
+
+**Issue: Missing Change-Id**
+
+```bash
+# Install commit-msg hook
+curl -Lo .git/hooks/commit-msg \
+  https://gerrit.example.com/tools/hooks/commit-msg
+chmod +x .git/hooks/commit-msg
+
+# Add Change-Id to existing commit
+git commit --amend
+# Hook adds Change-Id automatically
+```
+
+---
+
+## Troubleshooting Common Issues (cont.)
+
+**Issue: "Cannot merge due to path conflict"**
+
+```bash
+# Fetch latest main
+git fetch origin main
+
+# Rebase your change
+git rebase origin/main
+
+# Resolve conflicts, then continue
+git add resolved-file.go
+git rebase --continue
+
+# Push updated change
+git push origin HEAD:refs/for/main
+```
+
+---
+
+## Troubleshooting Common Issues (cont.)
+
+**Issue: "You are not allowed to upload merges"**
+
+```bash
+# You accidentally created a merge commit
+git log --oneline --graph  # Check for merge
+
+# Fix: Rebase to create linear history
+git rebase origin/main
+git push origin HEAD:refs/for/main
+```
+
+**Prevention:** Always rebase, don't merge
+
+---
+
+## Troubleshooting Common Issues (cont.)
+
+**Issue: "No new changes"**
+
+**Cause:** Pushing same commit again
+
+**Fix:**
+
+```bash
+# Make a change
+nvim some-file.go
+git add .
+git commit --amend  # Amend, don't create new commit
+git push origin HEAD:refs/for/main
+```
+
+**Remember:** Same Change-Id = same change, different patchset
+
+---
+
+## Performance Tips for Large Repos
+
+**Shallow clones:**
+
+```bash
+# Clone with limited history
+git clone --depth=1 https://gerrit.example.com/huge-repo
+```
+
+**Sparse checkout:**
+
+```bash
+# Only checkout specific directories
+git sparse-checkout init
+git sparse-checkout set services/my-service
+```
+
+**Partial clone:**
+
+```bash
+# Clone without blobs initially
+git clone --filter=blob:none https://gerrit.example.com/repo
+```
+
+---
+
+## Advanced Query Techniques
+
+**Complex query combinations:**
+
+```bash
+# Open changes older than 7 days without +2
+ssh gerrit gerrit query \
+  'status:open age:7d -label:Code-Review+2'
+
+# Changes I authored that need rebasing
+ssh gerrit gerrit query \
+  'owner:self status:open conflicts:any'
+
+# Changes with many comments (probably controversial)
+ssh gerrit gerrit query \
+  'status:open commentcount:>10'
+```
+
+---
+
+## Advanced Query Techniques (cont.)
+
+**Saved searches in Gerrit UI:**
+
+Create dashboard with common queries:
+
+- Your pending changes
+- Changes needing your review
+- Changes you starred
+- Changes in your team's projects
+
+**Access via:** Settings → Preferences → My Menu
+
+---
+
+## Gerrit REST API Usage
+
+**Query changes programmatically:**
+
+```bash
+# Get change details
+curl -X GET \
+  "https://gerrit.example.com/changes/12345" | \
+  sed '1d' | jq .
+
+# Get change files
+curl -X GET \
+  "https://gerrit.example.com/changes/12345/revisions/current/files" | \
+  sed '1d' | jq .
+```
+
+**Note:** First line is ")]}'" (XSS protection), remove with sed
+
+---
+
+## Gerrit REST API Usage (cont.)
+
+**Submit review via REST API:**
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"labels":{"Code-Review":1},"message":"LGTM"}' \
+  "https://gerrit.example.com/a/changes/12345/revisions/current/review"
+```
+
+**Authentication:** Use HTTP password from Gerrit Settings
+
+**Documentation:** https://gerrit-review.googlesource.com/Documentation/rest-api.html
+
+---
+
+## Hooks and Automation
+
+**Git hooks for Gerrit workflows:**
+
+**pre-commit hook:**
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+# Run linters before commit
+npm run lint || exit 1
+go fmt ./... || exit 1
+```
+
+**prepare-commit-msg hook:**
+
+```bash
+#!/bin/bash
+# Add issue tracker reference
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ISSUE=$(echo $BRANCH | grep -oE '[A-Z]+-[0-9]+')
+echo "Issue: $ISSUE" >> $1
+```
 
 ---
 
