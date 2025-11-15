@@ -630,111 +630,106 @@ Developer: *cries*
 
 ## Partial Clone for Large Monorepos
 
-**Problem:** Monorepo is huge, full clone takes forever
+**Problem:** Monorepo is huge, clone takes forever
 
-**Solution:** Git partial clone (blobless clone)
+**Solution:** Git partial clone
 
 ```bash
-# Clone without downloading blob objects initially
-git clone --filter=blob:none https://gerrit.company.com/monorepo
+# Clone without blobs initially
+git clone --filter=blob:none \
+  https://gerrit.company.com/monorepo
 ```
 
 **How it works:**
 
-- Downloads commit and tree objects
-- Skips blob objects (file contents) initially
-- Fetches blobs on-demand when you checkout/access files
-- Dramatically faster clone times
+- Downloads commits & trees
+- Skips blobs (file contents)
+- Fetches on-demand when needed
 
 ---
 
-## Partial Clone for Large Monorepos (cont.)
+## Partial Clone: Filter Options
 
-**Different filter options:**
+**Different filter types:**
 
 ```bash
-# No blobs at all (fetch on demand)
+# No blobs (fetch on demand)
 git clone --filter=blob:none <url>
 
-# No blobs larger than 1MB
+# Skip large blobs (>1MB)
 git clone --filter=blob:limit=1m <url>
 
-# Blobless + treeless (even faster, advanced)
+# Advanced: treeless clone
 git clone --filter=tree:0 <url>
 ```
 
-**Real-world impact:**
+---
 
-- **Full clone:** 10 GB, 45 minutes
-- **Partial clone:** 500 MB, 3 minutes
-- Blobs downloaded automatically when needed
+## Partial Clone: Real Impact
+
+**Performance comparison:**
+
+| Metric          | Full Clone | Partial Clone |
+| --------------- | ---------- | ------------- |
+| **Size**        | 10 GB      | 500 MB        |
+| **Time**        | 45 minutes | 3 minutes     |
+| **Fetch blobs** | Upfront    | On-demand     |
+
+**Blobs downloaded automatically when accessed**
 
 ---
 
-## Partial Clone for Large Monorepos (cont.)
+## Partial Clone + Sparse Checkout
 
-**Combine with sparse checkout:**
+**Combine for maximum efficiency:**
 
 ```bash
-# Partial clone
-git clone --filter=blob:none https://gerrit.company.com/monorepo
+# Step 1: Partial clone
+git clone --filter=blob:none \
+  https://gerrit.company.com/monorepo
 cd monorepo
 
-# Only checkout specific directories
+# Step 2: Sparse checkout
 git sparse-checkout init --cone
 git sparse-checkout set services/auth services/api
-
-# Now you have:
-# - Fast clone (no blobs upfront)
-# - Small working directory (only auth and api services)
 ```
 
-**Perfect for:**
+**Result:**
 
-- Large monorepos with many microservices
-- Developers working on specific services
-- CI/CD pipelines that need only parts of the repo
+- Fast clone (no blobs upfront)
+- Small working dir (specific services only)
 
 ---
 
-## Partial Clone Best Practices
+## Partial Clone: When to Use
 
-**When to use:**
+**Good candidates:**
 
 - Monorepos over 5 GB
-- Teams working on isolated services
-- CI builds that don't need full repo
+- Teams on isolated services
+- CI builds (partial repo)
+
+**Best for:**
+
+- Large monorepos with microservices
+- Developers on specific components
+- Build pipelines
+
+---
+
+## Partial Clone: Best Practices
 
 **Tips:**
 
-- Use `--filter=blob:none` as default for large repos
-- Combine with sparse checkout for maximum efficiency
-- CI/CD: Clone only what you build/test
+- Use `--filter=blob:none` by default
+- Combine with sparse checkout
+- CI/CD: clone only what you need
 
 **Limitations:**
 
-- Some Git operations may trigger on-demand fetches
-- Requires Git 2.22+ (released 2019)
-- Server must support partial clone (Gerrit does!)
-
----
-
-## Git Expertise Levels
-
-```
-Junior Dev:  git add .
-             git commit
-             git push
-
-Mid Dev:     git rebase -i HEAD~5
-             git push --force-with-lease
-
-Senior Dev:  ssh gerrit gerrit query --format=JSON \
-               status:open | jq '.[] | select(.age > 30)'
-
-Wizard:      *Edits .git/objects directly*
-             "I am one with the repository"
-```
+- Some operations trigger fetches
+- Requires Git 2.22+ (2019)
+- Server must support it (Gerrit ✓)
 
 ---
 
@@ -798,67 +793,101 @@ ssh gerrit gerrit review [OPTIONS] CHANGE,PATCHSET
 
 ## Querying Changes
 
+**Basic queries:**
+
 ```bash
 # Your pending changes
 ssh gerrit gerrit query status:open owner:self
 
 # Changes waiting for your review
 ssh gerrit gerrit query status:open reviewer:self
-
-# Changes in a specific project
-ssh gerrit gerrit query status:open project:myproject
-
-# Changes with specific topic
-ssh gerrit gerrit query topic:feature-auth
 ```
 
 ---
 
 ## Querying Changes (cont.)
 
+**Project and topic queries:**
+
 ```bash
-# Get detailed JSON output
+# Changes in a project
+ssh gerrit gerrit query status:open project:myproject
+
+# Changes with topic
+ssh gerrit gerrit query topic:feature-auth
+```
+
+---
+
+## Querying Changes: Advanced
+
+**Format and filtering:**
+
+```bash
+# JSON output
 ssh gerrit gerrit query --format=JSON change:12345
 
-# Recent changes with commit messages
+# Recent changes
 ssh gerrit gerrit query --format=TEXT status:open limit:5
+```
 
-# Changes by age
+---
+
+## Querying Changes: Combining Filters
+
+**Complex queries:**
+
+```bash
+# By age
 ssh gerrit gerrit query status:open age:2d
 
-# Combine multiple filters
-ssh gerrit gerrit query status:open project:myproject \
-  owner:self limit:10
+# Multiple filters
+ssh gerrit gerrit query status:open \
+  project:myproject owner:self limit:10
 ```
 
 ---
 
 ## Query Operators
 
-**Status and User Filters:**
+**Status Filters:**
 
-- `status:open` / `status:merged` / `status:abandoned`
-- `owner:USERNAME` - changes by specific user
-- `reviewer:USERNAME` - changes being reviewed by user
+- `status:open` - open changes
+- `status:merged` - merged changes
+- `status:abandoned` - abandoned changes
 
-**Project and Branch Filters:**
+**User Filters:**
 
-- `project:PROJECT_NAME` - changes in specific project
-- `branch:BRANCH_NAME` - changes targeting a branch
-- `topic:TOPIC` - changes with specific topic
+- `owner:USERNAME` - changes by user
+- `reviewer:USERNAME` - changes being reviewed
 
 ---
 
 ## Query Operators (cont.)
 
-**Time and Special Filters:**
+**Project and Branch Filters:**
 
-- `age:DAYS` - changes older than N days (e.g., `age:2d`)
-- `is:watched` / `is:starred` - your watched/starred changes
-- `label:Code-Review+2` - changes with specific label
-- `has:draft` - changes with draft comments
+- `project:PROJECT_NAME` - changes in project
+- `branch:BRANCH_NAME` - changes on branch
+- `topic:TOPIC` - changes with topic
 
-**Combine with AND:**
+**Time Filters:**
+
+- `age:DAYS` - older than N days
+- Example: `age:2d`, `age:7d`
+
+---
+
+## Query Operators (cont.)
+
+**Special Filters:**
+
+- `is:watched` - watched changes
+- `is:starred` - starred changes
+- `label:Code-Review+2` - specific label
+- `has:draft` - with draft comments
+
+**Combine filters:**
 
 ```bash
 ssh gerrit gerrit query status:open owner:self age:7d
@@ -876,8 +905,7 @@ ssh gerrit gerrit review 12345,1 --code-review +1
 
 # Vote +2 and verify
 ssh gerrit gerrit review 12345,2 \
-  --code-review +2 \
-  --verified +1
+  --code-review +1
 
 # Add a message with your review
 ssh gerrit gerrit review 12345,3 \
@@ -932,16 +960,24 @@ ssh gerrit gerrit stream-events | \
 **Daily workflow queries:**
 
 ```bash
-# What needs my review today?
+# What needs my review?
 ssh gerrit gerrit query status:open reviewer:self limit:10
 
 # What did I submit recently?
 ssh gerrit gerrit query owner:self status:merged age:7d
+```
 
+---
+
+## Practical SSH Examples (cont.)
+
+**Status and submission queries:**
+
+```bash
 # Check CI status of a change
 ssh gerrit gerrit query change:12345 --current-patch-set
 
-# Find changes waiting for submit
+# Find changes ready to submit
 ssh gerrit gerrit query status:open label:Code-Review+2
 ```
 
