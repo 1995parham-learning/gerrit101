@@ -1639,15 +1639,15 @@ git clone --filter=blob:none https://gerrit.example.com/repo
 ```bash
 # Open changes older than 7 days without +2
 ssh gerrit gerrit query \
-  'status:open age:7d -label:Code-Review+2'
+  -- 'status:open age:7d -label:Code-Review+2'
 
 # Changes I authored that need rebasing
 ssh gerrit gerrit query \
-  'owner:self status:open conflicts:any'
+  -- 'owner:self status:open conflicts:any'
 
 # Changes with many comments (probably controversial)
 ssh gerrit gerrit query \
-  'status:open commentcount:>10'
+  -- 'status:open commentcount:>10'
 ```
 
 ---
