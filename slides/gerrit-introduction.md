@@ -1308,6 +1308,8 @@ ssh gerrit gerrit query topic:user-auth-refactor
 ssh gerrit gerrit set-topic 12345 user-auth-refactor
 ```
 
+---
+
 **Hashtags for categorization:**
 
 ```bash
@@ -1335,6 +1337,8 @@ git rebase origin/main
 git push origin HEAD:refs/for/main
 ```
 
+---
+
 **If conflicts occur:**
 
 ```bash
@@ -1355,6 +1359,8 @@ git push origin HEAD:refs/for/main
 ```bash
 git rebase --abort
 ```
+
+---
 
 **Download change from Gerrit to rebase locally:**
 
