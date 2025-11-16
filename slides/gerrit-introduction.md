@@ -1667,43 +1667,6 @@ Create dashboard with common queries:
 
 ---
 
-## Gerrit REST API Usage
-
-**Query changes programmatically:**
-
-```bash
-# Get change details
-curl -X GET \
-  "https://gerrit.example.com/changes/12345" | \
-  sed '1d' | jq .
-
-# Get change files
-curl -X GET \
-  "https://gerrit.example.com/changes/12345/revisions/current/files" | \
-  sed '1d' | jq .
-```
-
-**Note:** First line is ")]}'" (XSS protection), remove with sed
-
----
-
-## Gerrit REST API Usage (cont.)
-
-**Submit review via REST API:**
-
-```bash
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"labels":{"Code-Review":1},"message":"LGTM"}' \
-  "https://gerrit.example.com/a/changes/12345/revisions/current/review"
-```
-
-**Authentication:** Use HTTP password from Gerrit Settings
-
-**Documentation:** https://gerrit-review.googlesource.com/Documentation/rest-api.html
-
----
-
 ## Hooks and Automation
 
 **Git hooks for Gerrit workflows:**
@@ -1717,6 +1680,8 @@ curl -X POST \
 npm run lint || exit 1
 go fmt ./... || exit 1
 ```
+
+---
 
 **prepare-commit-msg hook:**
 
@@ -1781,17 +1746,15 @@ Review every change, not just merges
 
 ## The Truth About Code Review
 
-```
-What developers say:
-"I love code reviews! They make my code better."
+> What developers say:
+> "I love code reviews! They make my code better."
 
-What developers think:
-"Please approve quickly so I can go to lunch"
+> What developers think:
+> "Please approve quickly so I can go to lunch"
 
-What actually happens:
-"Why are you changing my entire architecture
- in the comments? It's just a typo fix!"
-```
+> What actually happens:
+> "Why are you changing my entire architecture
+> in the comments? It's just a typo fix!"
 
 **But seriously... code reviews are awesome!** 👍
 
